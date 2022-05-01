@@ -22,7 +22,7 @@ Value PORT (eq|gt|lt|neq|range)
 #
 # This can be either a single port or a list.
 #
-Value RANGE ([(\S+\s\S+)]+)
+Value RANGE (\S+\s\S+)
 #
 # DESTINATION RegEx must be able to catch every possible source combination including masks. 'any' and 'host' and 'wildcard bits' are possible too.
 # 
