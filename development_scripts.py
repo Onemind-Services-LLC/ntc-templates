@@ -42,9 +42,7 @@ def ensure_spacing_for_multiline_comment(remark):
     # remarks that don't have a subsequent comment are not captured by regex
     if not remarks:
         remarks = (("", remark),)
-    # Example remarks: [('comment \n#', '      comment2 '), ('\n  #', 'comment3 # 9')]
-    remark_formatted = "".join([entry[0] + " " + entry[1].strip() for entry in remarks])
-    return remark_formatted
+    return "".join([f"{entry[0]} {entry[1].strip()}" for entry in remarks])
 
 
 def ensure_space_after_octothorpe(comment):
@@ -271,7 +269,7 @@ def update_yaml_comments(yaml_object):
         yaml_object_values = yaml_object
 
     for entry in yaml_object_values:
-        if isinstance(entry, dict) or isinstance(entry, list):
+        if isinstance(entry, (dict, list)):
             update_yaml_comments(entry)
 
 

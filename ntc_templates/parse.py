@@ -27,9 +27,11 @@ def _clitable_to_dict(cli_table):
     """Convert TextFSM cli_table object to list of dictionaries."""
     objs = []
     for row in cli_table:
-        temp_dict = {}
-        for index, element in enumerate(row):
-            temp_dict[cli_table.header[index].lower()] = element
+        temp_dict = {
+            cli_table.header[index].lower(): element
+            for index, element in enumerate(row)
+        }
+
         objs.append(temp_dict)
 
     return objs

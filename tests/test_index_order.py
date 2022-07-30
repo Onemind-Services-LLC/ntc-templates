@@ -96,16 +96,13 @@ def check_order(
     elif current_os != prior_os and current_os not in used_os:
         # prior OS has changed, do not need to check for length yet
         return True, ""
-    elif current_os == prior_os and cmd_len > prior_len:
+    elif current_os == prior_os:
         msg = "Current Command len '{0}' larger then previous '{1}', for command '{2}'".format(
             cmd_len, prior_len, cmd
         )
         return False, msg
-    elif current_os != prior_os and current_os in used_os:
-        msg = "'{0}' OS was already used in list on command '{1}'".format(current_os, cmd)
-        return False, msg
     else:
-        msg = "Failed for unknown reason"
+        msg = "'{0}' OS was already used in list on command '{1}'".format(current_os, cmd)
         return False, msg
 
 
