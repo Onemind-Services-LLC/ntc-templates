@@ -1,4 +1,5 @@
 """Tests that original from the developer test suite."""
+
 import os
 import glob
 import numbers
@@ -9,6 +10,7 @@ import pytest
 
 from ruamel.yaml import YAML
 from ruamel.yaml.compat import StringIO
+from ruamel.yaml.comments import CommentedMap
 from ruamel.yaml.scalarstring import DoubleQuotedScalarString as DQ
 
 from ntc_templates.parse import parse_output
@@ -20,6 +22,7 @@ YAML_OBJECT = YAML()
 YAML_OBJECT.explicit_start = True
 YAML_OBJECT.indent(sequence=4, offset=2)
 YAML_OBJECT.block_style = True
+YAML_OBJECT.width = float("inf")
 RE_MULTILINE_REMARK = re.compile(r"(.*\n\s*#)(.*)")
 
 
@@ -343,15 +346,19 @@ def ensure_yaml_standards(parsed_object, output_path):
     Returns:
         None: File I/O is performed to write ``parsed_object`` to ``output_path``.
     """
+    sorted_entry = []
     for entry in parsed_object["parsed_sample"]:
         # TextFSM conversion will allways be a list of dicts
-        for key, value in entry.items():
+        new_dict = CommentedMap()
+        for key, value in sorted(entry.items()):
             # TextFSM capture groups always return strings or lists
             # This also accounts for numbers incase the YAML was done by hand
             if isinstance(value, (str, numbers.Number)):
-                entry[key] = DQ(value)
+                new_dict[key] = DQ(value)
             else:
-                entry[key] = [DQ(val) for val in value]
+                new_dict[key] = [DQ(val) for val in value]
+        sorted_entry.append(new_dict)
+    parsed_object["parsed_sample"] = sorted_entry
     try:
         update_yaml_comments(parsed_object)
     except AttributeError:

@@ -1,4 +1,5 @@
 """Tests to check the order of the index file."""
+
 import re
 
 from tests import load_index_data
@@ -8,6 +9,7 @@ OS_CHOICES = [
     "a10",
     "alcatel_aos",
     "alcatel_sros",
+    "allied_telesis_awplus",
     "arista_eos",
     "aruba_aoscx",
     "aruba_os",
@@ -24,29 +26,39 @@ OS_CHOICES = [
     "cisco_apic",
     "cisco_asa",
     "cisco_ftd",
+    "cisco_fxos",
     "cisco_ios",
+    "cisco_nvfis",
     "cisco_nxos",
     "cisco_s300",
+    "cisco_viptela",
     "cisco_wlc",
     "cisco_xe",
     "cisco_xr",
     "dell_force10",
     "dell_powerconnect",
     "dlink_ds",
+    "edgecore",
+    "eltex",
     "enterasys",
     "ericsson_ipos",
-    "extreme",
+    "extreme_exos",
+    "extreme_slxos",
     "f5_ltm",
     "fortinet",
+    "fsas_sir",
     "hp_comware",
     "hp_procurve",
+    "huawei_ont",
+    "huawei_smartax",
     "huawei_vrp",
     "ipinfusion_ocnos",
-    "juniper",
     "juniper_junos",
     "juniper_screenos",
+    "juniper",
     "linux",
     "mikrotik_routeros",
+    "oneaccess_oneos",
     "ovs_linux",
     "paloalto_panos",
     "quanta_mesh",
@@ -58,6 +70,7 @@ OS_CHOICES = [
     "vyos",
     "watchguard_firebox",
     "yamaha",
+    "zte_zxros",
     "zyxel_os",
 ]
 CHOICES_STRING = "|".join(OS_CHOICES)
@@ -65,7 +78,14 @@ RE_TEMPLATE_OS = re.compile(rf"^({CHOICES_STRING})")
 
 
 def check_order(  # pylint: disable=too-many-arguments,too-many-arguments,too-many-return-statements
-    current_os, prior_os, cmd_len, prior_len, os_choices, used_os, cmd, prior_cmd
+    current_os,
+    prior_os,
+    cmd_len,
+    prior_len,
+    os_choices,
+    used_os,
+    cmd,
+    prior_cmd,
 ):
     """Enforcing the complex logic to ensure that the index file is ordered correctly."""
     add_os_check = []
@@ -118,10 +138,18 @@ def test_index_ordering():
         template = row[0].strip()
         os_match = RE_TEMPLATE_OS.match(template)
         current_os = os_match.group(0)
-        cmd = "_".join(template.split("_")[2:])
+        cmd_start_index = len(current_os) + 1
+        cmd = template[cmd_start_index:]
         cmd_len = len(cmd)
         check_val, check_msg = check_order(
-            current_os, prior_os, cmd_len, prior_len, OS_CHOICES, used_os, cmd, prior_cmd
+            current_os,
+            prior_os,
+            cmd_len,
+            prior_len,
+            OS_CHOICES,
+            used_os,
+            cmd,
+            prior_cmd,
         )
         if not check_val:
             # assertFalse(check_val, msg=check_msg)
